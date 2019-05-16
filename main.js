@@ -45,18 +45,6 @@ window.boot = function () {
                 }
             }
         }
-
-        var subpackages = settings.subpackages;
-        for (var subId in subpackages) {
-            var uuidArray = subpackages[subId].uuids;
-            if (uuidArray) {
-                for (var k = 0, l = uuidArray.length; k < l; k++) {
-                    if (typeof uuidArray[k] === 'number') {
-                        uuidArray[k] = uuids[uuidArray[k]];
-                    }
-                }
-            }
-        }
     }
 
     function setLoadingDisplay () {
@@ -111,30 +99,33 @@ window.boot = function () {
             }
         }
 
-        function loadScene(launchScene) {
-            cc.director.loadScene(launchScene, null,
-                function () {
-                    if (cc.sys.isBrowser) {
-                        // show canvas
-                        var canvas = document.getElementById('GameCanvas');
-                        canvas.style.visibility = '';
-                        var div = document.getElementById('GameDiv');
-                        if (div) {
-                            div.style.backgroundImage = '';
-                        }
-                    }
-                    cc.loader.onProgress = null;
-                    console.log('Success to load scene: ' + launchScene);
-                }
-            );
-
-        }
+        // init assets
+        cc.AssetLibrary.init({
+            libraryPath: 'res/import',
+            rawAssetsBase: 'res/raw-',
+            rawAssets: settings.rawAssets,
+            packedAssets: settings.packedAssets,
+            md5AssetsMap: settings.md5AssetsMap
+        });
 
         var launchScene = settings.launchScene;
 
         // load scene
-        loadScene(launchScene);
-
+        cc.director.loadScene(launchScene, null,
+            function () {
+                if (cc.sys.isBrowser) {
+                    // show canvas
+                    var canvas = document.getElementById('GameCanvas');
+                    canvas.style.visibility = '';
+                    var div = document.getElementById('GameDiv');
+                    if (div) {
+                        div.style.backgroundImage = '';
+                    }
+                }
+                cc.loader.onProgress = null;
+                console.log('Success to load scene: ' + launchScene);
+            }
+        );
     };
 
     // jsList
@@ -167,16 +158,6 @@ window.boot = function () {
         collisionMatrix: settings.collisionMatrix,
     }
 
-    // init assets
-    cc.AssetLibrary.init({
-        libraryPath: 'res/import',
-        rawAssetsBase: 'res/raw-',
-        rawAssets: settings.rawAssets,
-        packedAssets: settings.packedAssets,
-        md5AssetsMap: settings.md5AssetsMap,
-        subpackages: settings.subpackages
-    });
-
     cc.game.run(option, onStart);
 };
 
@@ -204,19 +185,8 @@ if (false) {
     window.boot();
 }
 else if (window.jsb) {
-
-    var isRuntime = (typeof loadRuntime === 'function');
-    if (isRuntime) {
-        require('src/settings.js');
-        require('src/cocos2d-runtime.js');
-        require('jsb-adapter/engine/index.js');
-    }
-    else {
-        require('src/settings.js');
-        require('src/cocos2d-jsb.js');
-        require('jsb-adapter/jsb-engine.js');
-    }
-
-    cc.macro.CLEANUP_IMAGE_CACHE = true;
+    require('src/settings.js');
+    require('src/cocos2d-jsb.js');
+    require('jsb-adapter/engine/index.js');
     window.boot();
 }
