@@ -41,7 +41,7 @@
 
 </head>
 <body>
-  <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
+  <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0" style="display: none"></canvas>
   <div id="splash">
     <div class="progress-bar stripes">
       <span style="width: 0%"></span>
@@ -59,7 +59,7 @@
     }
 
     var splash = document.getElementById('splash');
-    splash.style.display = 'block';
+    splash.style.display = 'none';
 
     var cocos2d = document.createElement('script');
     cocos2d.async = true;
