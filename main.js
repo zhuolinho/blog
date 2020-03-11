@@ -45,18 +45,6 @@ window.boot = function () {
                 }
             }
         }
-
-        var subpackages = settings.subpackages;
-        for (var subId in subpackages) {
-            var uuidArray = subpackages[subId].uuids;
-            if (uuidArray) {
-                for (var k = 0, l = uuidArray.length; k < l; k++) {
-                    if (typeof uuidArray[k] === 'number') {
-                        uuidArray[k] = uuids[uuidArray[k]];
-                    }
-                }
-            }
-        }
     }
 
     function setLoadingDisplay () {
@@ -111,6 +99,15 @@ window.boot = function () {
             }
         }
 
+        // init assets
+        cc.AssetLibrary.init({
+            libraryPath: 'res/import',
+            rawAssetsBase: 'res/raw-',
+            rawAssets: settings.rawAssets,
+            packedAssets: settings.packedAssets,
+            md5AssetsMap: settings.md5AssetsMap
+        });
+
         var launchScene = settings.launchScene;
 
         // load scene
@@ -127,6 +124,9 @@ window.boot = function () {
                 }
                 cc.loader.onProgress = null;
                 console.log('Success to load scene: ' + launchScene);
+                setTimeout(() => {
+                    window._dsf.onStart();
+                }, 0);
             }
         );
     };
@@ -160,16 +160,6 @@ window.boot = function () {
         groupList: settings.groupList,
         collisionMatrix: settings.collisionMatrix,
     }
-
-    // init assets
-    cc.AssetLibrary.init({
-        libraryPath: 'res/import',
-        rawAssetsBase: 'res/raw-',
-        rawAssets: settings.rawAssets,
-        packedAssets: settings.packedAssets,
-        md5AssetsMap: settings.md5AssetsMap,
-        subpackages: settings.subpackages
-    });
 
     cc.game.run(option, onStart);
 };
